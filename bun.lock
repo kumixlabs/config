@@ -27,14 +27,14 @@
     },
     "packages/biome-config": {
       "name": "@kumix/biome-config",
-      "version": "0.0.1",
+      "version": "0.1.0",
       "peerDependencies": {
         "@biomejs/biome": ">=2.5.0",
       },
     },
     "packages/eslint-config": {
       "name": "@kumix/eslint-config",
-      "version": "0.0.1",
+      "version": "0.1.0",
       "dependencies": {
         "@eslint/js": "^10.0.1",
         "@typescript-eslint/parser": "^8.62.1",
@@ -69,7 +69,7 @@
     },
     "packages/tsconfig": {
       "name": "@kumix/tsconfig",
-      "version": "0.0.1",
+      "version": "0.1.0",
     },
   },
   "packages": {

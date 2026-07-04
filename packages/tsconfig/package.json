@@ -1,6 +1,6 @@
 {
   "name": "@kumix/tsconfig",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Common TypeScript configuration.",
   "author": "Kumix Labs",
   "license": "MIT",
