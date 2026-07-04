@@ -1,0 +1,47 @@
+{
+  "name": "@kumix/tsconfig",
+  "version": "0.0.1",
+  "description": "Common TypeScript configuration.",
+  "author": "Kumix Labs",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./base": "./tsconfig.base.json",
+    "./bun": "./tsconfig.bun.json",
+    "./cf": "./tsconfig.cf.json",
+    "./dom": "./tsconfig.dom.json",
+    "./next": "./tsconfig.next.json",
+    "./node": "./tsconfig.node.json",
+    "./react": "./tsconfig.react.json"
+  },
+  "homepage": "https://github.com/kumixlabs/config",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kumixlabs/config",
+    "directory": "packages/tsconfig"
+  },
+  "bugs": {
+    "url": "https://github.com/kumixlabs/config/issues"
+  },
+  "files": [
+    "tsconfig.base.json",
+    "tsconfig.bun.json",
+    "tsconfig.cf.json",
+    "tsconfig.dom.json",
+    "tsconfig.next.json",
+    "tsconfig.node.json",
+    "tsconfig.react.json"
+  ],
+  "keywords": [
+    "kumix",
+    "typescript",
+    "tsconfig",
+    "configuration",
+    "config"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}

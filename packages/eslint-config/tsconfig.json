@@ -1,0 +1,9 @@
+{
+  "extends": ["@kumix/tsconfig/base"],
+  "compilerOptions": {
+    "types": ["node"],
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"]
+}

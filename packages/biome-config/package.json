@@ -1,0 +1,40 @@
+{
+  "name": "@kumix/biome-config",
+  "version": "0.0.1",
+  "description": "Opinionated Biome configuration for modern TypeScript projects.",
+  "author": "Kumix Labs",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./base": "./base.jsonc"
+  },
+  "scripts": {
+    "clean:all": "rimraf node_modules"
+  },
+  "homepage": "https://github.com/kumixlabs/config",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kumixlabs/config",
+    "directory": "packages/biome-config"
+  },
+  "bugs": {
+    "url": "https://github.com/kumixlabs/config/issues"
+  },
+  "files": [
+    "base.jsonc"
+  ],
+  "keywords": [
+    "kumix",
+    "biome",
+    "configuration",
+    "config"
+  ],
+  "peerDependencies": {
+    "@biomejs/biome": ">=2.5.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
