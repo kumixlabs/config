@@ -2,18 +2,20 @@
 
 MCP server for exploring Kumix Config packages, utilities, and documentation.
 
+This is a private package (`@kumix/mcp`, not published to npm). It scans every `@kumix/*` package in this repo and exposes them over MCP.
+
 ## Overview
 
 This MCP server provides access to:
 
 - **Configuration packages** in the Kumix Config
-- **Utility discovery** and search
+- **Component discovery** and search (indexes `src/**/*.{ts,tsx}` files)
 - **Source code reading** for development
-- **Usage examples** and documentation
+- **Usage examples** sourced from each package's README
 
 ## Available Packages
 
-### Configuration Packages (3)
+### Configuration Packages (5)
 
 - `@kumix/biome-config` - Shared Biome linting and formatting configuration
   - **Exports**: `/base` - Base Biome configuration
@@ -21,6 +23,14 @@ This MCP server provides access to:
 
 - `@kumix/eslint-config` - Shared ESLint configuration
   - **Exports**: Main - Base ESLint configuration
+  - **Usage**: Extend in your project's `eslint.config.js`
+
+- `@kumix/eslint-config-react` - ESLint configuration for React
+  - **Exports**: Main - React ESLint configuration
+  - **Usage**: Extend in your project's `eslint.config.js`
+
+- `@kumix/eslint-config-vite` - ESLint configuration for Vite
+  - **Exports**: Main - Vite ESLint configuration
   - **Usage**: Extend in your project's `eslint.config.js`
 
 - `@kumix/tsconfig` - Shared TypeScript configuration
@@ -174,7 +184,7 @@ Reads the source code of a specific component.
 **Example Prompts:**
 
 ```
-Show me the fast config in the eslint-config package.
+Show me the react config in the eslint-config-react package.
 Read the base eslint config implementation.
 Display the biome configuration base file.
 Show me the Biome config base.jsonc.
@@ -193,8 +203,8 @@ Gets usage examples for packages or components.
 
 ```
 Give me usage examples for the tsconfig package.
-How do I use the eslint-config package?
-Show me examples for the biome-config package.
+How do I use the eslint-config-react package?
+Show me examples for the eslint-config-vite package.
 How do I set up @kumix/biome-config?
 How do I use the eslint config?
 ```
@@ -227,9 +237,9 @@ Use the tools to discover and explore available packages:
 
 ### 3. Learning Patterns
 
-1. Find a component type (e.g., forms, modals, tables)
-2. Read multiple implementations
-3. Analyze common patterns and best practices
+1. Find a config export (e.g., `base`, `fast`, `react`, `vite`)
+2. Read its implementation with `read_component_code`
+3. Compare how presets compose across the eslint packages
 
 ## Tips for Best Results
 
@@ -247,9 +257,9 @@ Use the tools to discover and explore available packages:
 
 ### Understand the Structure
 
-- **Config**: Configuration packages (Biome, ESLint, TypeScript)
-- Each package has its own `src/` directory with TypeScript files
-- Config packages are in their root directory
+- All packages report the `config` category
+- ESLint packages have a `src/` directory with TypeScript files (indexed as components)
+- `@kumix/biome-config` and `@kumix/tsconfig` have no `src/` — their config files live in the package root
 
 ## Troubleshooting
 
@@ -281,6 +291,8 @@ Use the tools to discover and explore available packages:
    - Available packages:
      - `@kumix/biome-config`
      - `@kumix/eslint-config`
+     - `@kumix/eslint-config-react`
+     - `@kumix/eslint-config-vite`
      - `@kumix/tsconfig`
 
 ## File Structure Reference
@@ -297,15 +309,21 @@ packages/
 ├── eslint-config/        # Shared ESLint configuration
 │   ├── src/              # Source code
 │   └── package.json
+├── eslint-config-react/  # ESLint configuration for React
+│   ├── src/              # Source code
+│   └── package.json
+├── eslint-config-vite/   # ESLint configuration for Vite
+│   ├── src/              # Source code
+│   └── package.json
 └── tsconfig/             # TypeScript configuration presets
     └── package.json
 ```
 
 Each package contains:
 
-- `src/` - Source code directory
 - `package.json` - Package metadata
-- TypeScript utilities and functions
+- ESLint packages: a `src/` directory with the flat config source
+- `@kumix/biome-config` / `@kumix/tsconfig`: raw config files in the package root
 
 ## Development
 

@@ -2,7 +2,7 @@
   "name": "@kumix/tsconfig",
   "version": "0.1.0",
   "description": "Common TypeScript configuration.",
-  "author": "Kumix Labs",
+  "author": "Kumix Labs <hai@kumix.io>",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -18,7 +18,7 @@
   "homepage": "https://github.com/kumixlabs/config",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kumixlabs/config",
+    "url": "git+https://github.com/kumixlabs/config.git",
     "directory": "packages/tsconfig"
   },
   "bugs": {

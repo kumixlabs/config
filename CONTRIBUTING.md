@@ -1,27 +1,25 @@
 # Contributing to Kumix Config
 
-Thank you for your interest in contributing to Kumix Config! This monorepo hosts shared linting and TypeScript configuration packages built with TypeScript.
+Thank you for your interest in contributing! Kumix Config is a Bun monorepo of shared, publishable configuration packages (Biome, ESLint, TypeScript) plus a private MCP server.
 
 ## Code of Conduct
 
-This project is governed by our [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to kumixdev@gmail.com.
+This project and everyone participating in it is governed by our [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to the maintainers at **kumixlabs@gmail.com**.
 
 ## Why Contribute?
 
-Kumix Config is a community-driven collection of packages that standardize common SaaS capabilities. Your contributions help:
+This project is community-driven. Your contributions help:
 
-- Improve shared linting and formatting configurations
-- Enhance TypeScript configuration presets
-- Refine and expand the shared config packages
-- Fix bugs, improve performance, and strengthen type-safety
-- Keep documentation clear and up-to-date
+- Improve developer experience and documentation
+- Fix issues and enhance reliability
+- Extend tooling and workflow capabilities
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.3.9 or higher
-- Node.js 22 or higher
+- [Bun](https://bun.sh) 1.3.0 or higher
+- Node.js 24 or higher
 - Git
 
 ### Setup
@@ -29,7 +27,7 @@ Kumix Config is a community-driven collection of packages that standardize commo
 1. Fork the repository on GitHub
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/kumixlabs/config.git
+   git clone https://github.com/YOUR_USERNAME/config.git
    cd config
    ```
 3. Install dependencies:
@@ -46,14 +44,14 @@ Kumix Config is a community-driven collection of packages that standardize commo
 ### Running the Project
 
 ```bash
-# Run all workspaces in development mode
-bun run dev
-
 # Build all workspaces
 bun run build
 
 # Type-check all workspaces
 bun run types:check
+
+# Run all tests (Vitest, runs directly — bypasses Turborepo)
+bun run test
 
 # Lint (check)
 bun run lint
@@ -65,19 +63,18 @@ bun run lint:fix
 bun run format
 ```
 
+Note: `bun run test` does not build first. Run `bun run build` beforehand if a test needs a package's `dist/` output.
+
 ### Working on a Specific Package
 
 ```bash
 # Navigate to a package directory
-cd packages/eslint-config   # or any package under packages/
+cd packages/eslint-config  # or any package under packages/
 
-# Package-specific commands
-bun run dev            # Development with watch mode
-bun run build          # Build the package
+# Run package-specific commands (available scripts vary per package)
+bun run build          # Build the package (tsc)
 bun run types:check    # Type-check the package
 ```
-
-If the package includes environment variables, copy `.env.example` to `.env` and adjust values for local development.
 
 ## Code Style
 
@@ -92,17 +89,19 @@ This project uses [Biome](https://biomejs.dev/) for linting and formatting to en
 - **Trailing Commas**: All
 - **Arrow Parentheses**: Always
 
-### Format and Lint
+### Lint dan Format
 
-Before committing, run:
+Before committing, always run:
 
 ```bash
-# Format and lint in one command
-bun run lint:format
+# Lint (check)
+bun run lint
 
-# Or run separately
-bun run format    # Format only
-bun run lint      # Lint only
+# Lint (auto-fix)
+bun run lint:fix
+
+# Format only
+bun run format
 ```
 
 ## Making Changes
@@ -111,32 +110,34 @@ bun run lint      # Lint only
 
 Use descriptive branch names:
 
-- `feature/add-new-animation-component` - For new features
-- `fix/hook-hydration-bug` - For bug fixes
+- `feature/add-new-capability` - For new features
+- `fix/build-script-bug` - For bug fixes
 - `docs/update-readme` - For documentation
-- `refactor/simplify-components` - For refactoring
+- `refactor/simplify-structure` - For refactoring
 
 ### Commit Messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-feat(animation): add new text reveal component
-fix(hook): resolve hydration mismatch in useMounted
-docs(general): update utility function documentation
-refactor(base): simplify button component variants
-test(default): add unit tests for data grid filtering
+feat(template): add package scaffolding script
+fix(ci): correct bun run command in workflow
+docs(readme): clarify release process
+refactor(workspace): simplify outputs in turbo.json
+test(package): add basic type check script
 ```
 
 **Format**: `type(scope): description`
 
 **Types**:
 
-- `feat`: New feature
+- `feat` or `feature`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
 - `refactor`: Code refactoring
 - `test`: Adding or updating tests
+- `build`: Build system changes
+- `ci`: CI configuration changes
 - `chore`: Maintenance tasks
 
 ### Writing Code
@@ -206,10 +207,12 @@ Make sure:
 ### Pull Request Checklist
 
 - [ ] Code follows the project's style guidelines
-- [ ] Type-check succeeds (`bun types:check`)
-- [ ] Build succeeds (`bun build`)
-- [ ] Code is properly formatted (`bun lint:format`)
+- [ ] Tests pass (`bun run test`)
+- [ ] Types check (`bun run types:check`)
+- [ ] Build succeeds (`bun run build`)
+- [ ] Code is properly linted and formatted (`bun run lint`)
 - [ ] Commit messages follow conventional commits
+- [ ] A changeset is added for any package change (`bunx changeset`)
 - [ ] Documentation is updated (if needed)
 - [ ] No breaking changes (or clearly documented if necessary)
 
@@ -218,26 +221,25 @@ Make sure:
 ### Adding a New Package
 
 1. Create a new directory in `packages/`
-2. Copy the structure from an existing package under `packages/`
-3. Update `package.json` with appropriate metadata and workspace name (e.g., `@kumix/<name>`)
-4. Create `tsup.config.ts` for build configuration
-5. Add TypeScript configuration (`tsconfig.json`)
-6. Add the package to the workspace (Turborepo and root `workspaces` already include `packages/*`)
+2. Copy the structure from an existing package
+3. Update `package.json` with appropriate metadata
+4. Add a `tsconfig.json` that extends a `@kumix/tsconfig` preset (packages that build use `tsc`)
+5. Ensure the package is included in the workspace (`packages/*` is already globbed)
 
 ### Package Structure
+
+Packages that build (ESLint configs, MCP) use `tsc` and look like:
 
 ```
 packages/your-package/
 ├── src/
-│   ├── index.ts          # Main exports
-│   ├── types.ts          # Type definitions
-│   └── ...
+│   └── index.ts          # Main exports
 ├── package.json          # Package metadata
-├── tsup.config.ts        # Build configuration
 ├── tsconfig.json         # TypeScript configuration
-├── .env.example          # Environment variables (if needed)
 └── README.md             # Package documentation
 ```
+
+Config-only packages (`@kumix/biome-config`, `@kumix/tsconfig`) have no build step and ship raw config files from the package root instead of a `src/` directory.
 
 ### Publishing Packages (Maintainers Only)
 
@@ -249,7 +251,7 @@ This project uses [Changesets](https://github.com/changesets/changesets) for ver
    bunx changeset
    ```
 
-   Follow the prompts to describe your changes.
+   Follow the prompts to describe your changes. Note: `@kumix/mcp` is private and ignored by changesets.
 
 2. **Version packages**:
 
@@ -269,7 +271,7 @@ This project uses [Changesets](https://github.com/changesets/changesets) for ver
 
 ## Security
 
-If you discover a security vulnerability within Kumix Config, please send an email to kumixdev@gmail.com. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability, please report it privately as described in [SECURITY.md](./SECURITY.md).
 
 **Do not report security issues through public GitHub issues.**
 
@@ -278,9 +280,8 @@ If you discover a security vulnerability within Kumix Config, please send an ema
 If you have questions or need help:
 
 - Check the [documentation](./README.md) and package READMEs
-- Search [existing issues](https://github.com/kumixlabs/config/issues) and [discussions](https://github.com/kumixlabs/config/discussions)
-- Open a new [discussion](https://github.com/kumixlabs/config/discussions) for questions
-- Open an [issue](https://github.com/kumixlabs/config/issues) for bug reports
+- Open an [issue](https://github.com/kumixlabs/config/issues)
+- Start a [discussion](https://github.com/kumixlabs/config/discussions)
 
 ## License
 

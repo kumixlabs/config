@@ -50,7 +50,7 @@ class KumixConfigMCPServer {
           const packageJsonContent = await readFile(packageJsonPath, "utf-8");
           const packageJson = JSON.parse(packageJsonContent);
 
-          if (packageJson.name?.startsWith("@kumix/") && packageJson.name !== "@kumix/mcp.config") {
+          if (packageJson.name?.startsWith("@kumix/") && packageJson.name !== "@kumix/mcp") {
             // Check if package has src directory
             const srcDir = join(packageDir, "src");
             let componentFiles: string[] = [];
@@ -365,8 +365,6 @@ class KumixConfigMCPServer {
   }
 
   private generateUsageExample(packageName: string, componentName?: string): string {
-    const _shortName = packageName.replace("@kumix/", "");
-
     if (packageName.includes("config")) {
       if (packageName.includes("biome")) {
         return `// Biome config usage example
@@ -470,7 +468,7 @@ server.registerTool(
       package_name: z
         .string()
         .min(1, "Package name is required")
-        .describe("The name of the package (e.g., @kumix/email)"),
+        .describe("The name of the package (e.g., @kumix/biome-config)"),
     },
   },
   async ({ package_name }) => {

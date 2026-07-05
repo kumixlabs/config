@@ -52,22 +52,57 @@ Base configuration for general TypeScript projects.
 }
 ```
 
-### `@kumix/tsconfig/react`
+### `@kumix/tsconfig/bun`
 
-Configuration for React projects (supports both React 18+ and 19+).
+Configuration for Bun projects.
 
 **Features:**
 
-- Extends `dom` (which extends `base`)
-- JSX: react-jsx (automatic JSX runtime)
-- Module: ESNext, no emit (type-check only)
-- DOM types enabled
+- Extends `base`
+- Bun types enabled
+- Optimized for Bun runtime
 
-**Use case:** React applications and libraries
+**Use case:** Bun applications and libraries
 
 ```json
 {
-  "extends": "@kumix/tsconfig/react"
+  "extends": "@kumix/tsconfig/bun"
+}
+```
+
+### `@kumix/tsconfig/cf`
+
+Configuration for Cloudflare Workers projects.
+
+**Features:**
+
+- Extends `base`
+- Cloudflare Workers types
+- Edge runtime optimized
+
+**Use case:** Cloudflare Workers, Pages Functions
+
+```json
+{
+  "extends": "@kumix/tsconfig/cf"
+}
+```
+
+### `@kumix/tsconfig/dom`
+
+Configuration for browser/DOM projects.
+
+**Features:**
+
+- Extends `base`
+- DOM types enabled
+- Browser APIs available
+
+**Use case:** Browser-based applications, vanilla JS projects
+
+```json
+{
+  "extends": "@kumix/tsconfig/dom"
 }
 ```
 
@@ -106,57 +141,22 @@ Configuration for Node.js libraries and applications.
 }
 ```
 
-### `@kumix/tsconfig/bun`
+### `@kumix/tsconfig/react`
 
-Configuration for Bun projects.
-
-**Features:**
-
-- Extends `base`
-- Bun types enabled
-- Optimized for Bun runtime
-
-**Use case:** Bun applications and libraries
-
-```json
-{
-  "extends": "@kumix/tsconfig/bun"
-}
-```
-
-### `@kumix/tsconfig/dom`
-
-Configuration for browser/DOM projects.
+Configuration for React projects (supports both React 18+ and 19+).
 
 **Features:**
 
-- Extends `base`
+- Extends `dom` (which extends `base`)
+- JSX: react-jsx (automatic JSX runtime)
+- Module: ESNext, no emit (type-check only)
 - DOM types enabled
-- Browser APIs available
 
-**Use case:** Browser-based applications, vanilla JS projects
-
-```json
-{
-  "extends": "@kumix/tsconfig/dom"
-}
-```
-
-### `@kumix/tsconfig/cf`
-
-Configuration for Cloudflare Workers projects.
-
-**Features:**
-
-- Extends `base`
-- Cloudflare Workers types
-- Edge runtime optimized
-
-**Use case:** Cloudflare Workers, Pages Functions
+**Use case:** React applications and libraries
 
 ```json
 {
-  "extends": "@kumix/tsconfig/cf"
+  "extends": "@kumix/tsconfig/react"
 }
 ```
 

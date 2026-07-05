@@ -2,7 +2,7 @@
   "name": "@kumix/biome-config",
   "version": "0.1.0",
   "description": "Opinionated Biome configuration for modern TypeScript projects.",
-  "author": "Kumix Labs",
+  "author": "Kumix Labs <hai@kumix.io>",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -15,7 +15,7 @@
   "homepage": "https://github.com/kumixlabs/config",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kumixlabs/config",
+    "url": "git+https://github.com/kumixlabs/config.git",
     "directory": "packages/biome-config"
   },
   "bugs": {
