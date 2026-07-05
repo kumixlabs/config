@@ -53,7 +53,7 @@
     },
     "packages/eslint-config-react": {
       "name": "@kumix/eslint-config-react",
-      "version": "0.0.1",
+      "version": "0.1.0",
       "dependencies": {
         "@kumix/eslint-config": "workspace:*",
         "@tanstack/eslint-plugin-query": "^5.101.2",
@@ -73,7 +73,7 @@
     },
     "packages/eslint-config-vite": {
       "name": "@kumix/eslint-config-vite",
-      "version": "0.0.1",
+      "version": "0.1.0",
       "dependencies": {
         "@kumix/eslint-config": "workspace:*",
         "@kumix/eslint-config-react": "workspace:*",
