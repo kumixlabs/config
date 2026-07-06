@@ -18,7 +18,7 @@ No `tsup` anywhere. Every package that builds uses `tsc`.
 ```bash
 bun run build         # turbo build (dependsOn ^build)
 bun run types:check   # turbo types:check (dependsOn ^build — builds deps first)
-bun run lint          # biome check ONLY (does not run turbo lint)
+bun run lint          # biome check ONLY
 bun run lint:fix      # biome check --write --unsafe ONLY
 bun run format        # biome format --write
 bun run test          # turbo run test (dependsOn ^build — builds deps first)
