@@ -32,7 +32,7 @@
     },
     "packages/eslint-config": {
       "name": "@kumix/eslint-config",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@eslint/js": "^10.0.1",
         "@typescript-eslint/parser": "^8.62.1",
@@ -51,7 +51,7 @@
     },
     "packages/eslint-config-react": {
       "name": "@kumix/eslint-config-react",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@kumix/eslint-config": "workspace:*",
         "@tanstack/eslint-plugin-query": "^5.101.2",
@@ -70,7 +70,7 @@
     },
     "packages/eslint-config-vite": {
       "name": "@kumix/eslint-config-vite",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@kumix/eslint-config": "workspace:*",
         "@kumix/eslint-config-react": "workspace:*",
