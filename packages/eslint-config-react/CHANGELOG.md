@@ -1,5 +1,12 @@
 # @kumix/eslint-config-react
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`189383e`](https://github.com/kumixlabs/config/commit/189383eb931723433bc12a046388df87e4a3b3ba)]:
+  - @kumix/eslint-config@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @kumix/eslint-config
 
+## 0.1.1
+
+### Patch Changes
+
+- [`189383e`](https://github.com/kumixlabs/config/commit/189383eb931723433bc12a046388df87e4a3b3ba) Thanks [@kumixio](https://github.com/kumixio)! - Narrow the private-member `naming-convention` rule to the
+  `["property", "accessor", "method"]` selectors so constructor parameter
+  properties (`constructor(private foo: string)`) are no longer flagged.
+  The leading-underscore requirement still applies to ordinary private
+  properties, accessors, and methods.
+
 ## 0.1.0
 
 ### Minor Changes
