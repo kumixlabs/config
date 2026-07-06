@@ -31,9 +31,7 @@ describe("@kumix/eslint-config", () => {
 
   it("defines the custom naming-convention and accessibility rules", () => {
     const built = configs.buildConfig();
-    const withRules = built.find(
-      (entry) => entry.rules?.["@typescript-eslint/naming-convention"],
-    );
+    const withRules = built.find((entry) => entry.rules?.["@typescript-eslint/naming-convention"]);
     expect(withRules).toBeDefined();
     expect(withRules?.rules?.["@typescript-eslint/explicit-member-accessibility"]).toBeDefined();
   });

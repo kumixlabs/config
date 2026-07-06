@@ -21,24 +21,25 @@ bun run types:check   # turbo types:check (dependsOn ^build — builds deps firs
 bun run lint          # biome check ONLY (does not run turbo lint)
 bun run lint:fix      # biome check --write --unsafe ONLY
 bun run format        # biome format --write
-bun run test          # vitest run — runs root vitest.config.ts DIRECTLY, bypasses turbo
-bun run test:coverage # vitest run --coverage (v8)
-bun run clean:all     # turbo clean:all + rm -rf .turbo coverage node_modules (keeps bun.lock)
+bun run test          # turbo run test (dependsOn ^build — builds deps first)
+bun run test:watch    # turbo run test:watch
+bun run test:coverage # turbo run test:coverage (dependsOn ^build, v8)
+bun run clean:all     # turbo clean:all + rm -rf .turbo bun.lock node_modules (also deletes bun.lock)
 ```
 
 There is no `lint` task in `turbo.json` — the root `lint`/`lint:fix` scripts invoke Biome only.
 
-`bun run test` bypasses turbo, so it does NOT get turbo's `dependsOn: ["^build"]`. Build first if a test needs `dist/`.
+`bun run test` goes through turbo, so it gets `dependsOn: ["^build"]` and `dist/` is built first. The `test` and `test:coverage` tasks are declared in `turbo.json` (outputs `coverage/**`); `test:watch` is not, so turbo runs it uncached with defaults.
 
 ## Testing
 
-`vitest.config.ts` uses `projects: ["packages/*"]` — each package is its own vitest project. The three ESLint packages have tests in `packages/*/test/*.test.ts`; Biome ignores any `test` dir (see below). `@kumix/mcp`'s `test` script is `node dist/index.js --test`, a smoke check that requires a prior build.
+Each of the three ESLint packages has its own `vitest.config.ts` (`projects: ["test"]`) with tests in `packages/*/test/*.test.ts`. The root has no `vitest.config.ts` — `bun run test` delegates to `turbo run test`, which runs each package's `test` script. `@kumix/biome-config` and `@kumix/tsconfig` have no `test` script and are skipped. `@kumix/mcp`'s `test` script is `node dist/index.js --test`, a smoke check that requires a prior build.
 
-Run a single package's tests: `bun run test -- --run eslint-config`. The ESLint config tests import each package's `src/` and assert its preset composition, so they don't need `dist/`.
+Coverage (v8) is configured per-package in each `vitest.config.ts` with relaxed 40% tripwire thresholds (config presets have few exercisable branches). Run a single package's tests via turbo: `bunx turbo run test --filter=@kumix/eslint-config`. The ESLint config tests import each package's `src/` and assert its preset composition, so they don't need `dist/`.
 
 ## Linting quirks
 
-- Root `biome.jsonc` extends `@kumix/biome-config/base` and sets `"includes": ["!!**/test"]` — Biome ignores any `test` directory.
+- Root `biome.jsonc` extends `@kumix/biome-config/base` with no extra overrides. The `test` dir is **linted** (the previous `!!**/test` exclusion was removed when test infra was split per-package), so test files must pass Biome like the rest of the codebase.
 - `lint-staged` (in root `package.json`, no separate file): JS/TS → `biome check --write`, MD/YAML → `prettier --write`, JSON/JSONC/HTML → `biome format --write`. All use `--no-errors-on-unmatched`.
 
 ## Git hooks & commits
@@ -53,7 +54,7 @@ bun run version   # changeset version && bun update
 bun run release   # bash ./scripts/publish.sh
 ```
 
-`scripts/publish.sh` finds every `packages/*/package.json`, skips `"private": true`, runs `bun publish`, then `changeset tag`. Changesets: `commit: false` (no auto-commit), `baseBranch: main`, `bumpVersionsWithWorkspaceProtocolOnly: true`, `ignore: ["@kumix/mcp"]`.
+`scripts/publish.sh` finds every `packages/*/package.json`, skips `"private": true`, queries the npm registry for the already-published version, skips the package if it matches, otherwise runs `bun publish`, then `changeset tag`. Changesets: `commit: false` (no auto-commit), `baseBranch: main`, `bumpVersionsWithWorkspaceProtocolOnly: true`, `updateInternalDependencies: "patch"`, `ignore: ["@kumix/mcp"]`. The `patch` internal-dep policy means a change to one package ripples a patch bump to its workspace dependents (e.g. a change to `@kumix/eslint-config` also bumps `-react` and `-vite`).
 
 ## Dependency notes
 
