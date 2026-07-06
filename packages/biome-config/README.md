@@ -107,4 +107,4 @@ Create a `biome.jsonc` file in your project root:
 
 ## License
 
-MIT © [Kumix Inc.](../../LICENSE)
+MIT © [Kumix Labs](../../LICENSE)

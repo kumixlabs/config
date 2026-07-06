@@ -4,9 +4,9 @@ Bun monorepo — Kumix shared configs (Biome, ESLint, tsconfig) + a private MCP 
 
 ## Packages (`packages/*`, no `apps/*` yet)
 
-- `@kumix/eslint-config` — base ESLint flat config. Built with `tsc`.
-- `@kumix/eslint-config-react` — React preset. Built with `tsc`.
-- `@kumix/eslint-config-vite` — Vite/TanStack Router preset. Built with `tsc`.
+- `@kumix/eslint-config` — base ESLint flat config. Built with `tsc -p tsconfig.build.json`.
+- `@kumix/eslint-config-react` — React preset. Built with `tsc -p tsconfig.build.json`.
+- `@kumix/eslint-config-vite` — Vite/TanStack Router preset. Built with `tsc -p tsconfig.build.json`.
 - `@kumix/tsconfig` — ships raw `tsconfig.*.json` (base/bun/cf/dom/next/node/react). **No build step.**
 - `@kumix/biome-config` — ships raw `base.jsonc`. **No build step.**
 - `@kumix/mcp` — private MCP server (`packages/mcp/src/index.ts`). Built with `tsc`. Ignored by changesets.
@@ -23,10 +23,10 @@ bun run lint:fix      # biome check --write --unsafe ONLY
 bun run format        # biome format --write
 bun run test          # vitest run — runs root vitest.config.ts DIRECTLY, bypasses turbo
 bun run test:coverage # vitest run --coverage (v8)
-bun run clean:all     # turbo clean:all + rm -rf .turbo bun.lock coverage node_modules
+bun run clean:all     # turbo clean:all + rm -rf .turbo coverage node_modules (keeps bun.lock)
 ```
 
-A `lint` task exists in `turbo.json` but the root `lint`/`lint:fix` scripts invoke Biome only — turbo lint is not wired into them.
+There is no `lint` task in `turbo.json` — the root `lint`/`lint:fix` scripts invoke Biome only.
 
 `bun run test` bypasses turbo, so it does NOT get turbo's `dependsOn: ["^build"]`. Build first if a test needs `dist/`.
 
@@ -44,7 +44,7 @@ Run a single package's tests: `bun run test -- --run eslint-config`. The ESLint 
 ## Git hooks & commits
 
 - Husky pre-commit runs lint-staged; commit-msg runs commitlint.
-- Commitlint (`.commitlintrc.cjs`): `@commitlint/config-conventional` + `commitlint-plugin-function-rules`. Allowed types: `feat`, `feature`, `fix`, `refactor`, `docs`, `build`, `test`, `ci`, `chore`. `function-rules/header-max-length` disabled (no header length limit).
+- Commitlint (`.commitlintrc.cjs`): `@commitlint/config-conventional`. Allowed types: `feat`, `feature`, `fix`, `refactor`, `docs`, `build`, `test`, `ci`, `chore`.
 
 ## Publishing
 

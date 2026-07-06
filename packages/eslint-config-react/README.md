@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/npm/v/@kumix/eslint-config-react.svg)](https://www.npmjs.com/package/@kumix/eslint-config-react)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-ESLint configuration to use for React projects using Tanstack Query and Router.
+ESLint configuration to use for React projects using TanStack Query.
 
 This package is only available via ES Modules and requires ESLint 9 or greater, since it uses flat configs.
 
@@ -29,9 +29,9 @@ For most React projects, use the fast configuration with TypeScript project sett
 import { configs } from "@kumix/eslint-config-react";
 
 export default [
-  // For full configuration with Prettier and all plugins
+  // Full configuration
   // ...configs.reactFull,
-  // For fast configuration optimized for Biome (recommended)
+  // Fast configuration optimized for Biome (recommended)
   ...configs.reactFast,
   {
     languageOptions: {
@@ -84,4 +84,4 @@ See the [@kumix/eslint-config README](https://github.com/kumixlabs/config/tree/m
 
 ## License
 
-MIT © [Kumix Inc.](../../../LICENSE)
+MIT © [Kumix Labs](../../../LICENSE)

@@ -90,4 +90,4 @@ bun add -D @kumix/biome-config @biomejs/biome
 
 ## License
 
-MIT © [Kumix Inc.](../../LICENSE)
+MIT © [Kumix Labs](../../LICENSE)

@@ -56,6 +56,7 @@
         "useUniqueElementIds": "off",
         "noUnusedFunctionParameters": "off",
         "useParseIntRadix": "off",
+        // Handled by eslint-plugin-react-hooks in React projects
         "useHookAtTopLevel": "off"
       },
       "complexity": {
@@ -84,6 +85,7 @@
       "suspicious": {
         "noDuplicateProperties": "off",
         "noUnknownAtRules": "off",
+        // Handled by eslint-plugin-react-hooks in React projects
         "noArrayIndexKey": "off",
         "noExplicitAny": "warn",
         "noImplicitAnyLet": "off",

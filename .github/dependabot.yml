@@ -1,0 +1,43 @@
+version: 2
+updates:
+  # npm dependencies (Bun uses the npm registry, so the "npm" ecosystem works)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@eslint/*"
+          - "@typescript-eslint/*"
+      biome:
+        patterns:
+          - "@biomejs/*"
+      types:
+        patterns:
+          - "@types/*"
+          - "typescript"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+      mcp:
+        patterns:
+          - "@modelcontextprotocol/*"
+          - "zod"
+          - "glob"
+
+  # GitHub Actions used in workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"

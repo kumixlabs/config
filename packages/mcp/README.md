@@ -9,7 +9,7 @@ This is a private package (`@kumix/mcp`, not published to npm). It scans every `
 This MCP server provides access to:
 
 - **Configuration packages** in the Kumix Config
-- **Component discovery** and search (indexes `src/**/*.{ts,tsx}` files)
+- **Component discovery** and search — indexes TypeScript sources (`src/**/*.{ts,tsx}`) of built packages, and raw config files (`*.jsonc`, `tsconfig.*.json`) of config-only packages
 - **Source code reading** for development
 - **Usage examples** sourced from each package's README
 
@@ -258,8 +258,8 @@ Use the tools to discover and explore available packages:
 ### Understand the Structure
 
 - All packages report the `config` category
-- ESLint packages have a `src/` directory with TypeScript files (indexed as components)
-- `@kumix/biome-config` and `@kumix/tsconfig` have no `src/` — their config files live in the package root
+- Built packages (the three ESLint configs) expose their TypeScript sources under `src/` as components
+- Config-only packages (`@kumix/biome-config`, `@kumix/tsconfig`) have no `src/` — their raw config files (`base.jsonc`, `tsconfig.*.json`) are indexed from the package root instead
 
 ## Troubleshooting
 

@@ -4,7 +4,7 @@ Thank you for your interest in contributing! Kumix Config is a Bun monorepo of s
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by our [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to the maintainers at **kumixlabs@gmail.com**.
+This project and everyone participating in it is governed by our [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to the maintainers at **hai@kumix.io**.
 
 ## Why Contribute?
 
@@ -89,7 +89,7 @@ This project uses [Biome](https://biomejs.dev/) for linting and formatting to en
 - **Trailing Commas**: All
 - **Arrow Parentheses**: Always
 
-### Lint dan Format
+### Lint and Format
 
 Before committing, always run:
 
@@ -120,11 +120,11 @@ Use descriptive branch names:
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-feat(template): add package scaffolding script
+feat(eslint-config): add naming-convention rule
 fix(ci): correct bun run command in workflow
 docs(readme): clarify release process
 refactor(workspace): simplify outputs in turbo.json
-test(package): add basic type check script
+test(eslint-config): add preset composition tests
 ```
 
 **Format**: `type(scope): description`
@@ -193,7 +193,7 @@ Make sure:
 3. **Create a Pull Request** on GitHub targeting the `main` branch
 
 4. **Fill in the PR template** with:
-   - **Clear title**: Use conventional commit format (e.g., "feat(animation): add text reveal component")
+   - **Clear title**: Use conventional commit format (e.g., "feat(eslint-config): add naming-convention rule")
    - **Description**: Explain what changed and why
    - **Breaking changes**: Clearly document any breaking changes
    - **Related issues**: Reference issues (e.g., "Fixes #123", "Closes #456")

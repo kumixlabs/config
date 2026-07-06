@@ -1,7 +1,7 @@
 # Kumix Config
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Bun](https://img.shields.io/badge/bun-1.3.14-black)](https://bun.sh)
+[![Bun](https://img.shields.io/badge/bun-%3E%3D1.3.0-black)](https://bun.sh)
 
 A collection of ready-to-use packages for modern application development. This monorepo includes reusable packages for shared linting and TypeScript configurations.
 
@@ -100,7 +100,7 @@ We welcome contributions! This project is community-driven and your help makes i
 
 ## Security
 
-If you discover a security vulnerability, please email **kumixlabs@gmail.com**. All vulnerabilities will be addressed promptly.
+If you discover a security vulnerability, please email **hai@kumix.io**. All vulnerabilities will be addressed promptly.
 
 Do not report security issues through public GitHub issues.
 

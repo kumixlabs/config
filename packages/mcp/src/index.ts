@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { access, readFile } from "node:fs/promises";
-import { basename, dirname, extname, join, relative, resolve } from "node:path";
+import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -25,18 +25,44 @@ const __dirname = dirname(__filename);
 const PACKAGES_ROOT = resolve(__dirname, "..", "..");
 const PACKAGES_DIR = PACKAGES_ROOT;
 
+interface PackageInfo {
+  name: string;
+  version: string;
+  description: string;
+  main: string | undefined;
+  exports: string[];
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+  /** Source root for built packages; null for config-only packages. */
+  srcDir: string | null;
+  packageDir: string;
+  componentFiles: string[];
+  category: "config";
+}
+
+interface ComponentInfo {
+  name: string;
+  package: string;
+  path: string;
+  fullPath: string;
+}
+
 // Package information cache
-// biome-ignore lint/suspicious/noExplicitAny: <>
-const packages = new Map<string, any>();
-// biome-ignore lint/suspicious/noExplicitAny: <>
-const components = new Map<string, any>();
+const packages = new Map<string, PackageInfo>();
+// Components are keyed by `${packageName}::${pathWithoutExt}` so files that
+// share a basename across packages (e.g. `index.ts`, `tsconfig.*.json`) don't
+// silently overwrite each other.
+const components = new Map<string, ComponentInfo>();
 
 class KumixConfigMCPServer {
   private async loadPackageInfo(): Promise<void> {
     try {
-      // Scan packages directory (including subdirectories)
+      // Scan packages directory (top-level packages only; nested copies under
+      // node_modules are workspace symlinks of the same packages and would
+      // otherwise be indexed twice).
       const packageDirs = await glob(join(PACKAGES_DIR, "**/package.json"), {
         windowsPathsNoEscape: true,
+        ignore: ["**/node_modules/**", "**/dist/**"],
       });
 
       // Get parent directories of all package.json files
@@ -51,22 +77,39 @@ class KumixConfigMCPServer {
           const packageJson = JSON.parse(packageJsonContent);
 
           if (packageJson.name?.startsWith("@kumix/") && packageJson.name !== "@kumix/mcp") {
-            // Check if package has src directory
+            // Built packages keep their sources under src/; config-only packages
+            // (biome-config, tsconfig) ship raw files from the package root.
             const srcDir = join(packageDir, "src");
-            let componentFiles: string[] = [];
-            let hasSrcDir = false;
+            let componentRoot: string | null = null;
 
             try {
               await access(srcDir);
-              hasSrcDir = true;
-
-              // Get all TypeScript/TSX files in src directory
-              componentFiles = await glob(join(srcDir, "**/*.{ts,tsx}"), {
-                windowsPathsNoEscape: true,
-              });
+              componentRoot = srcDir;
             } catch (_error) {
-              // Package doesn't have src directory (like config packages)
-              hasSrcDir = false;
+              componentRoot = null;
+            }
+
+            let componentFiles: string[] = [];
+            if (componentRoot) {
+              // TypeScript/TSX sources for built packages
+              componentFiles = await glob(join(componentRoot, "**/*.{ts,tsx}"), {
+                windowsPathsNoEscape: true,
+                ignore: ["**/*.test.ts", "**/*.test.tsx"],
+              });
+            } else {
+              // Config-only packages: index raw config files from the package root
+              // (e.g. base.jsonc, tsconfig.*.json). Skip manifests and changelogs.
+              componentFiles = await glob(
+                [
+                  join(packageDir, "*.jsonc"),
+                  join(packageDir, "tsconfig.*.json"),
+                  join(packageDir, "*.json"),
+                ],
+                {
+                  windowsPathsNoEscape: true,
+                  ignore: ["**/package.json", "**/package-lock.json"],
+                },
+              );
             }
 
             // Extract exported components/members from package.json exports
@@ -74,7 +117,7 @@ class KumixConfigMCPServer {
               .filter((key) => key !== "./package.json")
               .map((key) => key.replace("./", ""));
 
-            const packageInfo = {
+            const packageInfo: PackageInfo = {
               name: packageJson.name,
               version: packageJson.version,
               description: packageJson.description,
@@ -82,38 +125,42 @@ class KumixConfigMCPServer {
               exports: exports,
               dependencies: packageJson.dependencies || {},
               devDependencies: packageJson.devDependencies || {},
-              srcDir: hasSrcDir ? srcDir : null,
+              srcDir: componentRoot,
               packageDir, // Store package root directory
               componentFiles,
-              category: this.getPackageCategory(packageJson.name),
+              category: "config",
             };
 
             packages.set(packageJson.name, packageInfo);
 
-            // Index components only if src directory exists
-            if (hasSrcDir) {
-              for (const componentFile of componentFiles) {
-                const componentName = basename(componentFile, extname(componentFile));
-                const relativePath = relative(srcDir, componentFile).replace(/\\/g, "/");
+            // Index every discovered file as a "component" so find/read works
+            // for both src-bearing and config-only packages. Paths are stored
+            // relative to the same root that readComponentCode joins against.
+            // The composite key prevents collisions when multiple packages ship
+            // files with the same basename (e.g. `index.ts`, `tsconfig.*.json`).
+            const baseForRelative = componentRoot ?? packageDir;
+            for (const componentFile of componentFiles) {
+              const componentName = basename(componentFile, extname(componentFile));
+              const relativePath = relative(baseForRelative, componentFile).replace(/\\/g, "/");
+              const key = `${packageJson.name}::${relativePath}`;
 
-                components.set(componentName, {
-                  name: componentName,
-                  package: packageJson.name,
-                  path: relativePath,
-                  fullPath: componentFile,
-                });
-              }
+              components.set(key, {
+                name: componentName,
+                package: packageJson.name,
+                path: relativePath,
+                fullPath: componentFile,
+              });
             }
           }
-        } catch (_error) {}
+        } catch (error) {
+          // One malformed package.json shouldn't kill the whole index, but
+          // silent swallowing makes missing packages impossible to debug.
+          console.error(`Failed to load ${packageJsonPath}:`, error);
+        }
       }
     } catch (error) {
       console.error("Error loading package info:", error);
     }
-  }
-
-  private getPackageCategory(_packageName: string): string {
-    return "config";
   }
 
   async listPackages(category: string = "all") {
@@ -130,7 +177,7 @@ class KumixConfigMCPServer {
     return {
       content: [
         {
-          type: "text" as "text",
+          type: "text" as const,
           text: JSON.stringify(
             {
               packages: filteredPackages.map((pkg) => ({
@@ -160,7 +207,7 @@ class KumixConfigMCPServer {
       return {
         content: [
           {
-            type: "text" as "text",
+            type: "text" as const,
             text: JSON.stringify(
               {
                 error: `Package ${packageName} not found`,
@@ -177,7 +224,7 @@ class KumixConfigMCPServer {
     return {
       content: [
         {
-          type: "text" as "text",
+          type: "text" as const,
           text: JSON.stringify(pkg, null, 2),
         },
       ],
@@ -189,20 +236,28 @@ class KumixConfigMCPServer {
       await this.loadPackageInfo();
     }
 
+    const needle = componentName.toLowerCase();
     let matchingComponents = Array.from(components.values()).filter((comp) =>
-      comp.name.toLowerCase().includes(componentName.toLowerCase()),
+      comp.name.toLowerCase().includes(needle),
     );
 
     if (packageFilter) {
-      matchingComponents = matchingComponents.filter((comp) =>
-        comp.package.includes(packageFilter),
-      );
+      // Match the unscoped suffix (e.g. "eslint-config" matches
+      // "@kumix/eslint-config" but not "@kumix/eslint-config-react"),
+      // case-insensitively. The full "@scope/name" identifier is also
+      // accepted as an exact match.
+      const filter = packageFilter.toLowerCase();
+      const unscopedFilter = filter.replace(/^@[^/]+\//, "");
+      matchingComponents = matchingComponents.filter((comp) => {
+        const compUnscoped = comp.package.replace(/^@[^/]+\//, "").toLowerCase();
+        return comp.package.toLowerCase() === filter || compUnscoped === unscopedFilter;
+      });
     }
 
     return {
       content: [
         {
-          type: "text" as "text",
+          type: "text" as const,
           text: JSON.stringify(
             {
               components: matchingComponents,
@@ -226,7 +281,7 @@ class KumixConfigMCPServer {
       return {
         content: [
           {
-            type: "text" as "text",
+            type: "text" as const,
             text: JSON.stringify(
               {
                 error: `Package ${packageName} not found`,
@@ -239,13 +294,29 @@ class KumixConfigMCPServer {
       };
     }
 
-    // Handle packages without src directory (config packages)
-    let fullPath: string;
-    if (pkg.srcDir) {
-      fullPath = join(pkg.srcDir, componentPath);
-    } else {
-      // For packages without src, use package root directory
-      fullPath = join(pkg.packageDir, componentPath);
+    // Resolve against the package's source root (or package root for
+    // config-only packages), then verify the result stays inside that root.
+    // This blocks path-traversal via "../" segments in the caller input.
+    const root = pkg.srcDir ?? pkg.packageDir;
+    const fullPath = resolve(root, componentPath);
+    const rel = relative(root, fullPath);
+    if (rel.startsWith("..") || isAbsolute(rel)) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify(
+              {
+                error: "Component path escapes the package root",
+                package: packageName,
+                component: componentPath,
+              },
+              null,
+              2,
+            ),
+          },
+        ],
+      };
     }
 
     try {
@@ -255,13 +326,12 @@ class KumixConfigMCPServer {
       return {
         content: [
           {
-            type: "text" as "text",
+            type: "text" as const,
             text: JSON.stringify(
               {
                 package: packageName,
                 component: componentPath,
                 code,
-                fullPath,
               },
               null,
               2,
@@ -273,12 +343,12 @@ class KumixConfigMCPServer {
       return {
         content: [
           {
-            type: "text" as "text",
+            type: "text" as const,
             text: JSON.stringify(
               {
                 error: `Component file not found: ${componentPath}`,
                 package: packageName,
-                searchedPath: fullPath,
+                searchedPath: rel,
               },
               null,
               2,
@@ -299,7 +369,7 @@ class KumixConfigMCPServer {
       return {
         content: [
           {
-            type: "text" as "text",
+            type: "text" as const,
             text: JSON.stringify(
               {
                 error: `Package ${packageName} not found`,
@@ -324,7 +394,7 @@ class KumixConfigMCPServer {
       return {
         content: [
           {
-            type: "text" as "text",
+            type: "text" as const,
             text: JSON.stringify(
               {
                 package: packageName,
@@ -347,7 +417,7 @@ class KumixConfigMCPServer {
       return {
         content: [
           {
-            type: "text" as "text",
+            type: "text" as const,
             text: JSON.stringify(
               {
                 package: packageName,
@@ -365,38 +435,41 @@ class KumixConfigMCPServer {
   }
 
   private generateUsageExample(packageName: string, componentName?: string): string {
-    if (packageName.includes("config")) {
-      if (packageName.includes("biome")) {
+    switch (packageName) {
+      case "@kumix/biome-config":
         return `// Biome config usage example
-// Add this to your project's biome.json
+// Add this to your project's biome.jsonc
 {
-  "extends": ["./node_modules/${packageName}/base.json"],
-  "files": {
-    "include": ["src/**/*"],
-    "ignore": ["dist/**/*"]
-  }
-}
+  "$schema": "https://biomejs.dev/schemas/latest/schema.json",
+  "extends": ["${packageName}/base"]
+}`;
 
-
-// Or extend in biome.json:
-import biomeConfig from "${packageName}/base";
-export default {
-  ...biomeConfig,
-  // Your custom overrides
-};`;
-      }
-
-      if (packageName.includes("eslint")) {
+      case "@kumix/eslint-config":
+      case "@kumix/eslint-config-react":
+      case "@kumix/eslint-config-vite": {
+        // The composed preset name differs per package.
+        const fastPreset =
+          packageName === "@kumix/eslint-config"
+            ? "fast"
+            : packageName === "@kumix/eslint-config-react"
+              ? "reactFast"
+              : "viteFast";
+        const fullPreset =
+          packageName === "@kumix/eslint-config"
+            ? "base"
+            : packageName === "@kumix/eslint-config-react"
+              ? "reactFull"
+              : "viteFull";
         return `// ESLint config usage example
 // eslint.config.js
 import { configs } from "${packageName}";
 
 export default [
-  // For full configuration with Prettier and all plugins
-  // ...configs.base, // or configs.reactFull, configs.viteFull depending on package
+  // Full configuration
+  // ...configs.${fullPreset},
 
-  // For fast configuration optimized for Biome (recommended)
-  ...configs.fast, // or configs.reactFast, configs.viteFast depending on package
+  // Fast configuration optimized for Biome (recommended)
+  ...configs.${fastPreset},
   {
     languageOptions: {
       parserOptions: {
@@ -407,32 +480,29 @@ export default [
 ];`;
       }
 
-      if (packageName.includes("tsconfig")) {
+      case "@kumix/tsconfig":
         return `// TypeScript config usage example
 // Extend in your tsconfig.json:
 {
-  "extends": "${packageName}",
+  "extends": "${packageName}/base",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"
-  }
+  },
+  "include": ["src/**/*"]
 }
 
-// Or in tsconfig.base.json:
-{
-  "extends": "${packageName}",
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}`;
-      }
+// Or pick a preset:
+//   ${packageName}/bun · /cf · /dom · /next · /node · /react`;
+
+      default:
+        if (componentName) {
+          return `// Example usage for ${packageName} (${componentName})
+import { ${componentName} } from "${packageName}";`;
+        }
+        return `// Example usage for ${packageName}
+// See the package README for specific export shapes.`;
     }
-
-    // Default fallback
-    return `// Example usage for ${packageName}
-import { main } from "${packageName}";
-
-// Use the main export
-const result = main();`;
   }
 }
 
@@ -489,7 +559,7 @@ server.registerTool(
       package_filter: z
         .string()
         .optional()
-        .describe("Optional package to search in (e.g., email, storage, utils)"),
+        .describe("Optional package to search in (e.g., eslint-config, eslint-config-react)"),
     },
   },
   async ({ component_name, package_filter }) => {

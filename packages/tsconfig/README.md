@@ -187,4 +187,4 @@ When extending any preset, you should override these options to match your proje
 
 ## License
 
-MIT © [Kumix Inc.](../../LICENSE)
+MIT © [Kumix Labs](../../LICENSE)

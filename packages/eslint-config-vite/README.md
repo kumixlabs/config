@@ -29,9 +29,9 @@ For most Vite React projects, use the fast configuration with TypeScript project
 import { configs } from "@kumix/eslint-config-vite";
 
 export default [
-  // For full configuration with Prettier and all plugins
+  // Full configuration
   // ...configs.viteFull,
-  // For fast configuration optimized for Biome (recommended)
+  // Fast configuration optimized for Biome (recommended)
   ...configs.viteFast,
   {
     languageOptions: {
@@ -50,7 +50,7 @@ This configuration adds the `eslint-plugin-react-refresh` plugin to ensure your 
 ### Key Rules
 
 - **react-refresh/only-export-components** - Warns when files export things other than React components, which can break HMR
-  - Configured with `{ allowConstantExport: true }` to allow constant exports alongside components
+  - Uses the plugin's `configs.vite` preset defaults
 
 ## Biome Integration
 
@@ -91,4 +91,4 @@ See the [@kumix/eslint-config README](https://github.com/kumixlabs/config/tree/m
 
 ## License
 
-MIT © [Kumix Inc.](../../../LICENSE)
+MIT © [Kumix Labs](../../../LICENSE)

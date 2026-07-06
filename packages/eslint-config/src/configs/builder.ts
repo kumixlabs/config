@@ -47,11 +47,14 @@ export function buildConfig(): Linter.Config[] {
           { accessibility: "no-public" },
         ],
 
-        // Enforce that private members are prefixed with an underscore
+        // Enforce that private members are prefixed with an underscore.
+        // Use explicit selectors so constructor parameter properties
+        // (`constructor(private foo: string)`) are NOT flagged — those are
+        // a separate selector and forcing `_` on them is invasive.
         "@typescript-eslint/naming-convention": [
           "error",
           {
-            selector: "memberLike",
+            selector: ["property", "accessor", "method"],
             modifiers: ["private"],
             format: ["camelCase"],
             leadingUnderscore: "require",

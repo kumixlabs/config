@@ -8,6 +8,16 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],
+      exclude: ["**/dist/**", "**/node_modules/**", "**/*.config.*"],
+      // Relaxed tripwire thresholds: this repo ships config presets whose
+      // runtime branches are hard to exercise from unit tests, so we use
+      // coverage as a regression signal rather than a hard gate.
+      thresholds: {
+        lines: 40,
+        functions: 40,
+        statements: 40,
+        branches: 40,
+      },
     },
   },
 });

@@ -32,7 +32,7 @@ export const react: Linter.Config[] = defineConfig(
       hooksPlugin.configs.flat["recommended-latest"],
     ],
     rules: {
-      // don't think this is necessary
+      // Not needed with the automatic JSX runtime (jsx: react-jsx)
       "react/react-in-jsx-scope": "off",
       // should validate props with TypeScript
       "react/prop-types": "off",
