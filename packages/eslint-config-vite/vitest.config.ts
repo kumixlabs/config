@@ -2,19 +2,16 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    projects: ["test"],
+    globals: true,
+    environment: "node",
+    include: ["test/**/*.test.ts"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "html", "lcov"],
-      exclude: ["**/dist/**", "**/node_modules/**", "**/*.config.*"],
-      // Relaxed tripwire thresholds: this repo ships config presets whose
-      // runtime branches are hard to exercise from unit tests, so we use
-      // coverage as a regression signal rather than a hard gate.
+      reporter: ["text", "html", "json", "lcov"],
+      include: ["src/**/*.{ts,tsx}"],
       thresholds: {
-        lines: 40,
-        functions: 40,
-        statements: 40,
-        branches: 40,
+        lines: 90,
+        branches: 85,
       },
     },
   },
