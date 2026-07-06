@@ -29,13 +29,13 @@ bun run clean:all     # turbo clean:all + rm -rf .turbo bun.lock node_modules (a
 
 There is no `lint` task in `turbo.json` — the root `lint`/`lint:fix` scripts invoke Biome only.
 
-`bun run test` goes through turbo, so it gets `dependsOn: ["^build"]` and `dist/` is built first. The `test` and `test:coverage` tasks are declared in `turbo.json` (outputs `coverage/**`); `test:watch` is not, so turbo runs it uncached with defaults.
+`bun run test` goes through turbo, so it gets `dependsOn: ["^build"]` and `dist/` is built first. The `test`, `test:coverage`, and `test:watch` tasks are all declared in `turbo.json`. `test` and `test:coverage` output `coverage/**`; `test:watch` is uncached and persistent (watch mode, also depends on `^build`).
 
 ## Testing
 
-Each of the three ESLint packages has its own `vitest.config.ts` (`projects: ["test"]`) with tests in `packages/*/test/*.test.ts`. The root has no `vitest.config.ts` — `bun run test` delegates to `turbo run test`, which runs each package's `test` script. `@kumix/biome-config` and `@kumix/tsconfig` have no `test` script and are skipped. `@kumix/mcp`'s `test` script is `node dist/index.js --test`, a smoke check that requires a prior build.
+Each of the three ESLint packages has its own `vitest.config.ts` (`include: ["test/**/*.test.ts"]`) with tests in `packages/*/test/*.test.ts`. The root has no `vitest.config.ts` — `bun run test` delegates to `turbo run test`, which runs each package's `test` script. `@kumix/biome-config` and `@kumix/tsconfig` have no `test` script and are skipped. `@kumix/mcp`'s `test` script is `node dist/index.js --test`, a smoke check that requires a prior build.
 
-Coverage (v8) is configured per-package in each `vitest.config.ts` with relaxed 40% tripwire thresholds (config presets have few exercisable branches). Run a single package's tests via turbo: `bunx turbo run test --filter=@kumix/eslint-config`. The ESLint config tests import each package's `src/` and assert its preset composition, so they don't need `dist/`.
+Coverage (v8) is configured per-package in each `vitest.config.ts` with 90% line / 85% branch thresholds. Run a single package's tests via turbo: `bunx turbo run test --filter=@kumix/eslint-config`. The ESLint config tests import each package's `src/` and assert its preset composition, so they don't need `dist/`.
 
 ## Linting quirks
 

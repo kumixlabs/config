@@ -55,16 +55,16 @@ bun run lint               # Lint with safe fixes
 bun run lint:fix           # Lint with comprehensive fixes
 bun run format             # Format code
 
-# Testing (Vitest, runs directly — bypasses Turborepo)
+# Testing (Vitest, via Turborepo — builds deps first)
 bun run test                          # Run all tests
 bun run test:coverage                 # Run tests with V8 coverage
-bun run test -- --run eslint-config   # Run one package's tests by pattern
+bunx turbo run test --filter=@kumix/eslint-config  # Run one package's tests
 
 # Maintenance
 bun run clean:all          # Deep clean (.turbo, bun.lock, coverage, node_modules)
 ```
 
-Note: `bun run test` runs the root `vitest.config.ts` directly and does not build dependencies first. Run `bun run build` beforehand if a test needs a package's `dist/` output.
+Note: `bun run test` goes through `turbo run test`, so dependencies are built first (`dependsOn: ["^build"]`).
 
 ### Working on Individual Packages
 

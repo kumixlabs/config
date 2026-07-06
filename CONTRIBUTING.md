@@ -50,7 +50,7 @@ bun run build
 # Type-check all workspaces
 bun run types:check
 
-# Run all tests (Vitest, runs directly — bypasses Turborepo)
+# Run all tests (Vitest, via Turborepo — builds deps first)
 bun run test
 
 # Lint (check)
@@ -63,7 +63,7 @@ bun run lint:fix
 bun run format
 ```
 
-Note: `bun run test` does not build first. Run `bun run build` beforehand if a test needs a package's `dist/` output.
+Note: `bun run test` goes through `turbo run test`, so dependencies are built first (`dependsOn: ["^build"]`).
 
 ### Working on a Specific Package
 

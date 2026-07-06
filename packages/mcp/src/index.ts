@@ -20,10 +20,9 @@ if (isTestMode) {
 // Get current directory for ESM modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-// Get the correct packages directory relative to this file
-// This works regardless of where the server is run from
-const PACKAGES_ROOT = resolve(__dirname, "..", "..");
-const PACKAGES_DIR = PACKAGES_ROOT;
+// Resolve the repo's packages/ directory relative to this file so the server
+// works regardless of where it's invoked from.
+const PACKAGES_DIR = resolve(__dirname, "..", "..");
 
 interface PackageInfo {
   name: string;
