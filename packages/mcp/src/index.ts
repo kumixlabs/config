@@ -24,6 +24,18 @@ const __dirname = dirname(__filename);
 // works regardless of where it's invoked from.
 const PACKAGES_DIR = resolve(__dirname, "..", "..");
 
+// Read this package's version at startup so the advertised server version
+// stays in sync with package.json (avoids drift between the two). Reading the
+// file at runtime keeps it outside `rootDir`/tsc's source graph.
+let SERVER_VERSION = "0.0.0";
+try {
+  const pkgJsonPath = resolve(__dirname, "..", "package.json");
+  const pkgJson = JSON.parse(await readFile(pkgJsonPath, "utf-8"));
+  if (typeof pkgJson.version === "string") SERVER_VERSION = pkgJson.version;
+} catch {
+  // keep default
+}
+
 interface PackageInfo {
   name: string;
   version: string;
@@ -220,11 +232,13 @@ class KumixConfigMCPServer {
       };
     }
 
+    // Strip filesystem-absolute fields before returning to the client.
+    const { packageDir, srcDir, componentFiles, ...safeInfo } = pkg;
     return {
       content: [
         {
           type: "text" as const,
-          text: JSON.stringify(pkg, null, 2),
+          text: JSON.stringify(safeInfo, null, 2),
         },
       ],
     };
@@ -299,6 +313,39 @@ class KumixConfigMCPServer {
     const root = pkg.srcDir ?? pkg.packageDir;
     const fullPath = resolve(root, componentPath);
     const rel = relative(root, fullPath);
+
+    // Restrict to safe source/config extensions so this tool can't be used to
+    // read arbitrary files (.env, lock files, etc.). Config-only packages ship
+    // .jsonc/.json config files, so those are allowed alongside TS/JS sources.
+    const allowedExtensions = new Set([
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".cjs",
+      ".json",
+      ".jsonc",
+    ]);
+    if (!allowedExtensions.has(extname(fullPath).toLowerCase())) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify(
+              {
+                error: `Unsupported file type. Allowed extensions: ${[...allowedExtensions].join(", ")}`,
+                package: packageName,
+                component: componentPath,
+              },
+              null,
+              2,
+            ),
+          },
+        ],
+      };
+    }
+
     if (rel.startsWith("..") || isAbsolute(rel)) {
       return {
         content: [
@@ -508,7 +555,7 @@ import { ${componentName} } from "${packageName}";`;
 // Create server instance
 const server = new McpServer({
   name: "Kumix Config",
-  version: "0.1.0",
+  version: SERVER_VERSION,
 });
 
 // Instance of our business logic
