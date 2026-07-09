@@ -57,7 +57,7 @@
   "devDependencies": {
     "@kumix/tsconfig": "workspace:*",
     "eslint": "^10.6.0",
-    "typescript": "^6.0.3"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "eslint": ">=9.30.0"
