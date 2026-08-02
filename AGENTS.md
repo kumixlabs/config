@@ -1,65 +1,48 @@
 # AGENTS.md
 
-Bun monorepo — Kumix shared configs (Biome, ESLint, tsconfig) + a private MCP server. Turborepo orchestrates builds; Biome lints/formats; vitest runs tests. ESM only. `engines`: node >=24, bun >=1.3.0. `packageManager`: bun@1.3.14.
+Bun monorepo containing shared development configurations (ESLint, Biome, TypeScript) and a private MCP helper server. Turborepo orchestrates tasks, Biome lints/formats, and Vitest runs tests.
 
-## Packages (`packages/*`, no `apps/*` yet)
+## Package Architecture
 
-- `@kumix/eslint-config` — base ESLint flat config. Built with `tsc -p tsconfig.build.json`.
-- `@kumix/eslint-config-react` — React preset. Built with `tsc -p tsconfig.build.json`.
-- `@kumix/eslint-config-vite` — Vite/TanStack Router preset. Built with `tsc -p tsconfig.build.json`.
-- `@kumix/tsconfig` — ships raw `tsconfig.*.json` (base/bun/cf/dom/next/node/react). **No build step.**
-- `@kumix/biome-config` — ships raw `base.jsonc`. **No build step.**
-- `@kumix/mcp` — private MCP server (`packages/mcp/src/index.ts`). Built with `tsc`. Ignored by changesets.
+Every package is located in `packages/`. No `apps/` directories exist yet.
 
-No `tsup` anywhere. Every package that builds uses `tsc`.
+- **Build-reliant packages** (use `tsc` to build):
+  - `@kumix/eslint-config` — Base ESLint flat config. Built with `tsc -p tsconfig.build.json`.
+  - `@kumix/eslint-config-react` — React ESLint preset. Built with `tsc -p tsconfig.build.json`. Depends on `@kumix/eslint-config`.
+  - `@kumix/eslint-config-vite` — Vite and React Refresh preset. Built with `tsc -p tsconfig.build.json`. Depends on `@kumix/eslint-config` & `-react`.
+  - `@kumix/mcp` — Private Model Context Protocol server. Built with `tsc`.
+- **Config-only packages** (no build step, ship raw configs from root):
+  - `@kumix/tsconfig` — TypeScript base & platform-specific configs.
+  - `@kumix/biome-config` — Shared Biome config rules (`base.jsonc`).
 
-## Commands (run from root)
+Internal packages reference each other via `"workspace:*"` protocol. All packages use TypeScript `6.0.3` via the root `"typescript": "catalog:"`.
 
-```bash
-bun run build         # turbo build (dependsOn ^build)
-bun run types:check   # turbo types:check (dependsOn ^build — builds deps first)
-bun run lint          # biome check ONLY
-bun run lint:fix      # biome check --write --unsafe ONLY
-bun run format        # biome format --write
-bun run test          # turbo run test (dependsOn ^build — builds deps first)
-bun run test:watch    # turbo run test:watch
-bun run test:coverage # turbo run test:coverage (dependsOn ^build, v8)
-bun run clean:all     # turbo clean:all + rm -rf .turbo bun.lock .husky/_ node_modules
-```
+## Task Commands
 
-There is no `lint` task in `turbo.json` — the root `lint`/`lint:fix` scripts invoke Biome only.
+Run all command scripts from the workspace root:
 
-`bun run test` goes through turbo with `dependsOn: ["^build"]` — this builds each package's **dependencies**, not the package itself. The three ESLint packages' tests import `src/` directly, so they don't need `dist/`. `@kumix/mcp`'s test (`node dist/index.js --test`) **does** need its own `dist/`, which turbo does not build for it — run `bun run build` first or the MCP test fails. The `test`, `test:coverage`, and `test:watch` tasks are all declared in `turbo.json`. `test` and `test:coverage` output `coverage/**`; `test:watch` is uncached and persistent (watch mode, also depends on `^build`).
+- `bun run build` — Builds all packages via turbo (depends on `^build`).
+- `bun run types:check` — Runs `tsc --noEmit` on packages (depends on `^build`).
+- `bun run lint` — Runs Biome lints over the codebase (no turbo task).
+- `bun run lint:fix` — Automatically corrects safe/unsafe Biome violations.
+- `bun run format` — Formats files via Biome.
+- `bun run test` — Runs Vitest unit tests (depends on `^build`).
+- `bun run clean:all` — Clears cache files, node_modules, build outputs, and lock files.
 
-## Testing
+### Verifying Changes
 
-Each of the three ESLint packages has its own `vitest.config.ts` (`include: ["test/**/*.test.ts"]`) with tests in `packages/*/test/*.test.ts`. The root has no `vitest.config.ts` — `bun run test` delegates to `turbo run test`, which runs each package's `test` script. `@kumix/biome-config` and `@kumix/tsconfig` have no `test` script and are skipped.
+- **Test one package:** `bunx turbo run test --filter=@kumix/eslint-config`
+- **MCP Server execution check:** `@kumix/mcp` test script runs its executable output with `--test` to verify load behavior. **Important:** Run `bun run build` before testing `@kumix/mcp` as its test runs against the compiled `dist/index.js` artifact. Vitest tests for the eslint packages run against `src/` directly and do not require a build first.
 
-Coverage (v8) is configured per-package in each `vitest.config.ts` with 90% line / 85% branch thresholds. Run a single package's tests via turbo: `bunx turbo run test --filter=@kumix/eslint-config`.
+## CI & Publishing
 
-## Linting quirks
+- **CI Pipeline:** Pull request validation (`lint.yml`) runs the following sequence: `build -> lint -> types:check -> test`.
+- **Releasing:** Triggered automatically via push to `main` with package updates. The release workflow uses Changesets. Do not invoke `bun run release` locally.
+- **Changesets Quirks:**
+  - `@kumix/mcp` is ignored in Changesets config (never versioned or published).
+  - `updateInternalDependencies` is set to `"patch"`. A change to `@kumix/eslint-config` will trigger automatic version updates across all React and Vite ESLint presets.
 
-- Root `biome.jsonc` extends `@kumix/biome-config/base` with no extra overrides. The `test` dir is **linted** (the previous `!!**/test` exclusion was removed when test infra was split per-package), so test files must pass Biome like the rest of the codebase.
-- `lint-staged` (in root `package.json`, no separate file): JS/TS → `biome check --write`, MD/YAML → `prettier --write`, JSON/JSONC/HTML → `biome format --write`. All use `--no-errors-on-unmatched`.
+## Operational Gotchas
 
-## CI
-
-Both workflows (`.github/workflows/`) gate on the same sequence: `build -> lint -> types:check -> test`. `lint.yml` runs on PRs to `main`; `release.yml` runs on push to `main` touching `.changeset/**` or `packages/**`. Release is automated — `changesets/action` opens a "version packages" PR, then publishes via `bun run release` (which calls `scripts/publish.sh`). Do not run `bun run release` locally.
-
-## Git hooks & commits
-
-- Husky pre-commit runs lint-staged; commit-msg runs commitlint.
-- Commitlint (`.commitlintrc.cjs`): `@commitlint/config-conventional`. Allowed types: `feat`, `feature`, `fix`, `refactor`, `docs`, `build`, `test`, `ci`, `chore`.
-
-## Publishing
-
-```bash
-bun run version   # changeset version && bun update
-bun run release   # bash ./scripts/publish.sh
-```
-
-`scripts/publish.sh` finds every `packages/*/package.json`, skips `"private": true`, queries the npm registry for the already-published version, skips the package if it matches, otherwise runs `bun publish`, then `changeset tag`. Changesets: `commit: false` (no auto-commit), `baseBranch: main`, `bumpVersionsWithWorkspaceProtocolOnly: true`, `updateInternalDependencies: "patch"`, `ignore: ["@kumix/mcp"]`. The `patch` internal-dep policy means a change to one package ripples a patch bump to its workspace dependents (e.g. a change to `@kumix/eslint-config` also bumps `-react` and `-vite`).
-
-## Dependency notes
-
-Internal deps use `workspace:*`. The root `catalog` pins `typescript` at `6.0.3`; every package references it via `"typescript": "catalog:"`.
+- **No tsup/bundlers:** Package compilation relies strictly on `tsc`.
+- **No lint task in turbo:** Biome acts directly on the workspace layout. It also lints all package tests (the `test/` directory is not excluded).
