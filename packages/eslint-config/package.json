@@ -48,8 +48,8 @@
   "dependencies": {
     "@eslint/js": "^10.0.1",
     "@typescript-eslint/parser": "^8.67.0",
-    "eslint-config-turbo": "^2.10.9",
-    "globals": "^17.9.0",
+    "eslint-config-turbo": "^2.10.10",
+    "globals": "^17.11.0",
     "typescript-eslint": "^8.67.0"
   },
   "devDependencies": {
