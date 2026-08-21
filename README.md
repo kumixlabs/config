@@ -1,7 +1,7 @@
 # Kumix Config
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Bun](https://img.shields.io/badge/bun-%3E%3D1.3.0-black)](https://bun.sh)
+[![Bun](https://img.shields.io/badge/bun-%3E%3D1.4.0-black)](https://bun.sh)
 
 A collection of ready-to-use packages for modern application development. This monorepo includes reusable packages for shared linting and TypeScript configurations.
 
@@ -28,7 +28,7 @@ A collection of ready-to-use packages for modern application development. This m
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.3.0 or higher
+- [Bun](https://bun.sh) 1.4.0 or higher
 - Node.js 24 or higher
 
 ### Installation
@@ -57,11 +57,13 @@ bun run format             # Format code
 
 # Testing (Vitest, via Turborepo — builds deps first)
 bun run test                          # Run all tests
+bun run test:watch                    # Run tests in watch mode
 bun run test:coverage                 # Run tests with V8 coverage
 bunx turbo run test --filter=@kumix/eslint-config  # Run one package's tests
 
 # Maintenance
-bun run clean:all          # Deep clean (.turbo, bun.lock, coverage, node_modules)
+bun run clean                         # Clean package build outputs
+bun run clean:all                     # Deep clean (.turbo, bun.lock, .husky/_, coverage, dist, node_modules)
 ```
 
 Note: `bun run test` goes through `turbo run test`, so dependencies are built first (`dependsOn: ["^build"]`).

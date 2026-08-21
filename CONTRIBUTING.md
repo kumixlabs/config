@@ -18,7 +18,7 @@ This project is community-driven. Your contributions help:
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.3.0 or higher
+- [Bun](https://bun.sh) 1.4.0 or higher
 - Node.js 24 or higher
 - Git
 
