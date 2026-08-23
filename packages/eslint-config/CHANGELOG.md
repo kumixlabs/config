@@ -1,5 +1,11 @@
 # @kumix/eslint-config
 
+## 0.1.2
+
+### Patch Changes
+
+- [`e5138f1`](https://github.com/kumixlabs/config/commit/e5138f1a35e881f640dfed6502faef00f1a14ed4) Thanks [@kumixio](https://github.com/kumixio)! - Remove duplicate presets. `base`/`reactFull`/`viteFull` were aliases of `fast`/`reactFast`/`viteFast`. Use `fast`, `reactFast`, and `viteFast` respectively.
+
 ## 0.1.1
 
 ### Patch Changes
