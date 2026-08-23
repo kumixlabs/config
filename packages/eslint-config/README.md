@@ -17,14 +17,14 @@ bun add -D @kumix/eslint-config eslint typescript
 
 This package exposes a single flat config, designed to run alongside [`@kumix/biome-config`](https://www.npmjs.com/package/@kumix/biome-config) (Biome handles formatting and import sorting, ESLint handles type-aware linting).
 
-It is available under two named exports, `base` and `fast`, which are currently aliases of the same config — use whichever name you prefer.
+It is available under the `fast` named export.
 
 ```js
 // eslint.config.js
 import { configs } from "@kumix/eslint-config";
 
 export default [
-  ...configs.base,
+  ...configs.fast,
   {
     languageOptions: {
       parserOptions: {

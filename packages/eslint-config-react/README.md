@@ -15,10 +15,9 @@ bun add -D @kumix/eslint-config-react eslint typescript
 
 ## Configurations
 
-This package provides two configurations:
+This package provides one composed configuration:
 
-- **reactFull** - Full configuration extending `@kumix/eslint-config` base with React rules
-- **reactFast** - Performance-optimized configuration extending `@kumix/eslint-config` fast with React rules
+- **reactFast** - `@kumix/eslint-config` fast preset with the React layer on top
 
 ### Recommended Starter Configuration
 
@@ -29,8 +28,6 @@ For most React projects, use the fast configuration with TypeScript project sett
 import { configs } from "@kumix/eslint-config-react";
 
 export default [
-  // Full configuration
-  // ...configs.reactFull,
   // Fast configuration optimized for Biome (recommended)
   ...configs.reactFast,
   {
@@ -45,7 +42,7 @@ export default [
 
 ## Biome Integration
 
-When using `reactFast`, you get the same React-specific rules but with the performance benefits from the base fast configuration. **For optimal performance, use [`@kumix/biome-config`](https://www.npmjs.com/package/@kumix/biome-config)** alongside the fast configuration:
+When using `reactFast`, you get the React-specific rules with the performance benefits from the base fast configuration. **For optimal performance, use [`@kumix/biome-config`](https://www.npmjs.com/package/@kumix/biome-config)** alongside the fast configuration:
 
 ```bash
 bun add -D @kumix/biome-config @biomejs/biome
@@ -59,13 +56,9 @@ bun add -D @kumix/biome-config @biomejs/biome
 }
 ```
 
-### `reactFull` vs `reactFast`
-
-`reactFull` and `reactFast` extend `@kumix/eslint-config`'s `base` and `fast` presets respectively. Those presets are currently identical, so `reactFull` and `reactFast` resolve to the same rule set today — pick whichever name reads best for your project.
-
 ### React-Specific Rules
 
-Both presets add the same React layer on top of the base config, since Biome has no equivalents:
+`reactFast` adds the React layer on top of the base config, since Biome has no equivalents:
 
 - React recommended rules (`eslint-plugin-react`)
 - React Hooks rules (`eslint-plugin-react-hooks`, `recommended-latest`)

@@ -3,14 +3,9 @@ import { describe, expect, it } from "vitest";
 import { configs } from "../src/index.js";
 
 describe("@kumix/eslint-config", () => {
-  it("exposes buildConfig, base, and fast", () => {
+  it("exposes buildConfig and fast", () => {
     expect(typeof configs.buildConfig).toBe("function");
-    expect(Array.isArray(configs.base)).toBe(true);
     expect(Array.isArray(configs.fast)).toBe(true);
-  });
-
-  it("base and fast are the same config", () => {
-    expect(configs.base).toBe(configs.fast);
   });
 
   it("buildConfig returns a fresh non-empty array of config objects", () => {

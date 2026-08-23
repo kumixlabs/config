@@ -48,7 +48,6 @@ interface PackageInfo {
   srcDir: string | null;
   packageDir: string;
   componentFiles: string[];
-  category: "config";
 }
 
 interface ComponentInfo {
@@ -71,7 +70,7 @@ class KumixConfigMCPServer {
       // Scan packages directory (top-level packages only; nested copies under
       // node_modules are workspace symlinks of the same packages and would
       // otherwise be indexed twice).
-      const packageDirs = await glob(join(PACKAGES_DIR, "**/package.json"), {
+      const packageDirs = await glob(join(PACKAGES_DIR, "*/package.json"), {
         windowsPathsNoEscape: true,
         ignore: ["**/node_modules/**", "**/dist/**"],
       });
@@ -137,9 +136,8 @@ class KumixConfigMCPServer {
               dependencies: packageJson.dependencies || {},
               devDependencies: packageJson.devDependencies || {},
               srcDir: componentRoot,
-              packageDir, // Store package root directory
+              packageDir,
               componentFiles,
-              category: "config",
             };
 
             packages.set(packageJson.name, packageInfo);
@@ -174,16 +172,12 @@ class KumixConfigMCPServer {
     }
   }
 
-  async listPackages(category: string = "all") {
+  async listPackages() {
     if (packages.size === 0) {
       await this.loadPackageInfo();
     }
 
-    let filteredPackages = Array.from(packages.values());
-
-    if (category !== "all") {
-      filteredPackages = filteredPackages.filter((pkg) => pkg.category === category);
-    }
+    const allPackages = Array.from(packages.values());
 
     return {
       content: [
@@ -191,14 +185,13 @@ class KumixConfigMCPServer {
           type: "text" as const,
           text: JSON.stringify(
             {
-              packages: filteredPackages.map((pkg) => ({
+              packages: allPackages.map((pkg) => ({
                 name: pkg.name,
                 version: pkg.version,
                 description: pkg.description,
-                category: pkg.category,
                 exportsCount: pkg.exports.length,
               })),
-              total: filteredPackages.length,
+              total: allPackages.length,
             },
             null,
             2,
@@ -273,7 +266,8 @@ class KumixConfigMCPServer {
           type: "text" as const,
           text: JSON.stringify(
             {
-              components: matchingComponents,
+              // Strip filesystem-absolute paths before returning to the client.
+              components: matchingComponents.map(({ fullPath: _fullPath, ...safe }) => safe),
               total: matchingComponents.length,
             },
             null,
@@ -500,21 +494,12 @@ class KumixConfigMCPServer {
             : packageName === "@kumix/eslint-config-react"
               ? "reactFast"
               : "viteFast";
-        const fullPreset =
-          packageName === "@kumix/eslint-config"
-            ? "base"
-            : packageName === "@kumix/eslint-config-react"
-              ? "reactFull"
-              : "viteFull";
         return `// ESLint config usage example
 // eslint.config.js
 import { configs } from "${packageName}";
 
 export default [
-  // Full configuration
-  // ...configs.${fullPreset},
-
-  // Fast configuration optimized for Biome (recommended)
+  // Configuration preset (optimized for running alongside Biome)
   ...configs.${fastPreset},
   {
     languageOptions: {
@@ -566,13 +551,10 @@ server.registerTool(
   "list_packages",
   {
     description: "List all available Kumix config packages",
-    inputSchema: {
-      category: z.enum(["config", "all"]).default("all").describe("Filter packages by category"),
-    },
+    inputSchema: {},
   },
-  async ({ category }) => {
-    const result = await kumixServer.listPackages(category || "all");
-    return result;
+  async () => {
+    return kumixServer.listPackages();
   },
 );
 
