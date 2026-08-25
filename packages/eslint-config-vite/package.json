@@ -52,11 +52,11 @@
     "@kumix/eslint-config-react": "workspace:*",
     "@tanstack/eslint-plugin-router": "^1.162.0",
     "eslint-plugin-react-refresh": "^0.5.4",
-    "typescript-eslint": "^8.67.0"
+    "typescript-eslint": "^8.68.0"
   },
   "devDependencies": {
     "@kumix/tsconfig": "workspace:*",
-    "eslint": "^10.9.0",
+    "eslint": "^10.9.1",
     "typescript": "catalog:"
   },
   "peerDependencies": {
