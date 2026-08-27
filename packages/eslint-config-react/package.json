@@ -48,7 +48,7 @@
   ],
   "dependencies": {
     "@kumix/eslint-config": "workspace:*",
-    "@tanstack/eslint-plugin-query": "^5.102.3",
+    "@tanstack/eslint-plugin-query": "^5.102.7",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "typescript-eslint": "^8.68.0"
