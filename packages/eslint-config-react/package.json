@@ -48,10 +48,10 @@
   ],
   "dependencies": {
     "@kumix/eslint-config": "workspace:*",
-    "@tanstack/eslint-plugin-query": "^5.103.2",
+    "@tanstack/eslint-plugin-query": "^5.104.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "typescript-eslint": "^8.70.1"
+    "typescript-eslint": "^8.71.0"
   },
   "devDependencies": {
     "@kumix/tsconfig": "workspace:*",
