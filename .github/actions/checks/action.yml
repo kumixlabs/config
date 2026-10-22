@@ -25,9 +25,9 @@ runs:
       shell: bash
       run: bun run build
 
-    # - name: Lint
-    #   shell: bash
-    #   run: bun run lint
+    - name: Lint
+      shell: bash
+      run: bun run lint
 
     - name: Check Types
       shell: bash
