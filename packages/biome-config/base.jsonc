@@ -178,5 +178,13 @@
   "tailwind": {
     "mergeFunctions": ["cn", "clsx", "tw", "tw.*"],
     "variantFunctions": ["cva"]
-  }
+  },
+  "overrides": [
+    {
+      "includes": [".changeset/**", "**/.changeset/**"],
+      "formatter": { "enabled": false },
+      "linter": { "enabled": false },
+      "assist": { "enabled": false }
+    }
+  ]
 }
