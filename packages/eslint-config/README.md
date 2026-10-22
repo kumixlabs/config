@@ -65,7 +65,7 @@ bun add -D @kumix/biome-config @biomejs/biome
 // biome.jsonc
 {
   "$schema": "https://biomejs.dev/schemas/latest/schema.json",
-  "extends": ["@kumix/biome-config/base"],
+  "extends": ["@kumix/biome-config/base"]
 }
 ```
 

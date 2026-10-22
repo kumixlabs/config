@@ -95,7 +95,6 @@ For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 We welcome contributions! This project is community-driven and your help makes it better.
 
 **Getting Started:**
-
 - Read the [Contributing Guide](./CONTRIBUTING.md) for development setup and guidelines
 - Check the [Code of Conduct](./CODE_OF_CONDUCT.md)
 - Browse [open issues](https://github.com/kumixlabs/config/issues) or start a [discussion](https://github.com/kumixlabs/config/discussions)

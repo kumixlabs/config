@@ -5,7 +5,6 @@ Bun monorepo containing shared development configurations (ESLint, Biome, TypeSc
 ## Package Architecture
 
 Every package is located in `packages/`. No `apps/` directories exist yet.
-
 - **Build-reliant packages** (use `tsc` to build):
   - `@kumix/eslint-config` — Base ESLint flat config. Built with `tsc -p tsconfig.build.json`.
   - `@kumix/eslint-config-react` — React ESLint preset. Built with `tsc -p tsconfig.build.json`. Depends on `@kumix/eslint-config`.
@@ -20,7 +19,6 @@ Internal packages reference each other via `"workspace:*"` protocol. All package
 ## Task Commands
 
 Run all command scripts from the workspace root:
-
 - `bun run build` — Builds all packages via turbo (depends on `^build`).
 - `bun run types:check` — Runs `tsc --noEmit` on packages (depends on `^build`).
 - `bun run lint` — Runs Biome lints over the codebase (no turbo task).
