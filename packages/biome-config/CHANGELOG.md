@@ -1,5 +1,11 @@
 # @kumix/biome-config
 
+## 0.2.1
+
+### Patch Changes
+
+- [`20c3c19`](https://github.com/kumixlabs/config/commit/20c3c19e7a5dfa85f65b1df66939c0bbfe0a5772) Thanks [@kumixio](https://github.com/kumixio)! - Fix docs: Tailwind nursery rules (`useTailwindStaticClassStrings`, `noTailwindRawColors`, `noTailwindRestyledComponents`) are off by default, not warn. Opt in per project.
+
 ## 0.2.0
 
 ### Minor Changes

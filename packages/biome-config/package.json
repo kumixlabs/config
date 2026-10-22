@@ -1,6 +1,6 @@
 {
   "name": "@kumix/biome-config",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Opinionated Biome configuration for modern TypeScript projects.",
   "author": "Kumix Labs <hai@kumix.io>",
   "license": "MIT",
