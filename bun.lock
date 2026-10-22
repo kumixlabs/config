@@ -22,13 +22,6 @@
         "vitest": "^5.0.5",
       },
     },
-    "packages/biome-config": {
-      "name": "@kumix/biome-config",
-      "version": "0.1.0",
-      "peerDependencies": {
-        "@biomejs/biome": ">=2.6.0",
-      },
-    },
     "packages/eslint-config": {
       "name": "@kumix/eslint-config",
       "version": "0.1.2",
@@ -289,7 +282,7 @@
 
     "@keyv/serialize": ["@keyv/serialize@1.1.1", "", {}, "sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA=="],
 
-    "@kumix/biome-config": ["@kumix/biome-config@workspace:packages/biome-config"],
+    "@kumix/biome-config": ["@kumix/biome-config@0.1.0", "", { "peerDependencies": { "@biomejs/biome": ">=2.5.0" } }, "sha512-VbtBNrhyv6xOubbQlp/NVtYWmbgZtWbOJ+0VYNFtWwFGnXLv/mtjBsWMQU/Md5nd7ZeolnXYMTxgPUqFY8U4tw=="],
 
     "@kumix/eslint-config": ["@kumix/eslint-config@workspace:packages/eslint-config"],
 
