@@ -10,13 +10,20 @@
     "includes": [
       "**",
       "!**/bun.lock",
+      "!**/routeTree.gen.ts",
+      "!!**/.cloudflare",
       "!!**/.husky",
       "!!**/.next",
+      "!!**/.nitro",
+      "!!**/.output",
       "!!**/.source",
+      "!!**/.tanstack",
       "!!**/.turbo",
+      "!!**/.wrangler",
       "!!**/build",
       "!!**/coverage",
       "!!**/dist",
+      "!!**/dist-ssr",
       "!!**/generated",
       "!!**/node_modules",
       "!!**/out"
@@ -32,7 +39,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "a11y": {
         "noAutofocus": "off",
         "noLabelWithoutControl": "off",
@@ -96,13 +103,13 @@
         }
       },
       "nursery": {
-        "useSortedClasses": {
+        "useTailwindSortedClasses": {
           "fix": "safe",
-          "level": "info",
-          "options": {
-            "functions": ["cn", "clsx", "cva", "tw", "tw.*"]
-          }
-        }
+          "level": "info"
+        },
+        "useTailwindStaticClassStrings": "warn",
+        "noTailwindRawColors": "warn",
+        "noTailwindRestyledComponents": "warn"
       }
     }
   },
@@ -167,5 +174,9 @@
     "parser": {
       "tailwindDirectives": true
     }
+  },
+  "tailwind": {
+    "mergeFunctions": ["cn", "clsx", "tw", "tw.*"],
+    "variantFunctions": ["cva"]
   }
 }

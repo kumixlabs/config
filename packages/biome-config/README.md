@@ -27,8 +27,9 @@ Create a `biome.jsonc` file in your project root:
 ### Core
 
 - VCS integration enabled (Git, honors ignore files)
-- Includes all files except common build outputs (`dist`, `build`, `.turbo`, `coverage`, `node_modules`, etc.)
+- Includes all files except common build outputs (`dist`, `dist-ssr`, `build`, `.turbo`, `.cloudflare`, `.nitro`, `.output`, `.tanstack`, `.wrangler`, `coverage`, `node_modules`, `out`, `generated`, `routeTree.gen.ts`, etc.)
 - Unknown file kinds are not ignored by default
+- Requires Biome `>=2.6.0`
 
 ### Formatting
 
@@ -65,7 +66,7 @@ Create a `biome.jsonc` file in your project root:
 ### Linting
 
 - Linter enabled
-- Recommended rules: on
+- Rule preset: `recommended`
 - Accessibility rules largely disabled for pragmatic development
 - Correctness:
   - `noUnusedImports`: level info, safe fix
@@ -85,7 +86,17 @@ Create a `biome.jsonc` file in your project root:
   - `noDoubleEquals`: warn, safe fix
   - `noArrayIndexKey`, `noUnknownAtRules`, `noDuplicateProperties`, `noImplicitAnyLet`: off
 - Nursery:
-  - `useSortedClasses`: level info, safe fix; recognizes `cn()` utility
+  - `useTailwindSortedClasses`: level info, safe fix (Tailwind v4 sorting)
+  - `useTailwindStaticClassStrings`: warn
+  - `noTailwindRawColors`: warn
+  - `noTailwindRestyledComponents`: warn
+
+### Tailwind
+
+- Top-level `tailwind` config feeds all Tailwind rules across JSX/TSX/HTML/Vue/Svelte/Astro:
+  - `mergeFunctions`: `cn`, `clsx`, `tw`, `tw.*`
+  - `variantFunctions`: `cva`
+- Set `tailwind.stylesheet` in your project's `biome.jsonc` (e.g. `"app/globals.css"`) so sorting and `noTailwindRawColors` use your design system
 
 ### Code Assists (Organize Imports)
 

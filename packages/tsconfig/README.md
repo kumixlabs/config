@@ -35,7 +35,6 @@ Create a `tsconfig.json` in your project root and extend one of the presets:
 Base configuration for general TypeScript projects.
 
 **Features:**
-
 - Target: ES2022
 - Module: ES2022
 - Strict mode enabled
@@ -57,7 +56,6 @@ Base configuration for general TypeScript projects.
 Configuration for Bun projects.
 
 **Features:**
-
 - Extends `base`
 - Bun types enabled
 - Optimized for Bun runtime
@@ -75,7 +73,6 @@ Configuration for Bun projects.
 Configuration for Cloudflare Workers projects.
 
 **Features:**
-
 - Extends `base`
 - Cloudflare Workers types
 - Edge runtime optimized
@@ -93,7 +90,6 @@ Configuration for Cloudflare Workers projects.
 Configuration for browser/DOM projects.
 
 **Features:**
-
 - Extends `base`
 - DOM types enabled
 - Browser APIs available
@@ -111,7 +107,6 @@ Configuration for browser/DOM projects.
 Configuration for Next.js projects.
 
 **Features:**
-
 - Extends `react`
 - Next.js-specific optimizations
 - Plugin support for Next.js
@@ -129,7 +124,6 @@ Configuration for Next.js projects.
 Configuration for Node.js libraries and applications.
 
 **Features:**
-
 - Extends `base`
 - Node.js types enabled
 
@@ -146,7 +140,6 @@ Configuration for Node.js libraries and applications.
 Configuration for React projects (supports both React 18+ and 19+).
 
 **Features:**
-
 - Extends `dom` (which extends `base`)
 - JSX: react-jsx (automatic JSX runtime)
 - Module: ESNext, no emit (type-check only)
