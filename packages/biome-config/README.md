@@ -87,9 +87,7 @@ Create a `biome.jsonc` file in your project root:
   - `noArrayIndexKey`, `noUnknownAtRules`, `noDuplicateProperties`, `noImplicitAnyLet`: off
 - Nursery:
   - `useTailwindSortedClasses`: level info, safe fix (Tailwind v4 sorting)
-  - `useTailwindStaticClassStrings`: warn
-  - `noTailwindRawColors`: warn
-  - `noTailwindRestyledComponents`: warn
+  - `useTailwindStaticClassStrings`, `noTailwindRawColors`, `noTailwindRestyledComponents`: off (opt-in per project)
 
 ### Tailwind
 

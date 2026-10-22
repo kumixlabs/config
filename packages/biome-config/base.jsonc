@@ -10,8 +10,9 @@
     "includes": [
       "**",
       "!**/bun.lock",
+      "!**/CHANGELOG.md",
       "!**/routeTree.gen.ts",
-      "!!**/.changeset",
+      "!!**/.changeset/*.md",
       "!!**/.cloudflare",
       "!!**/.husky",
       "!!**/.next",
@@ -19,6 +20,7 @@
       "!!**/.output",
       "!!**/.source",
       "!!**/.tanstack",
+      "!**/*.test.*",
       "!!**/.turbo",
       "!!**/.wrangler",
       "!!**/build",
@@ -27,7 +29,8 @@
       "!!**/dist-ssr",
       "!!**/generated",
       "!!**/node_modules",
-      "!!**/out"
+      "!!**/out",
+      "!!**/test"
     ]
   },
   "formatter": {
@@ -60,6 +63,7 @@
           "level": "info",
           "options": {}
         },
+        "noComponentHookFactories": "off",
         "noUnknownTypeSelector": "off",
         "useUniqueElementIds": "off",
         "noUnusedFunctionParameters": "off",
@@ -108,9 +112,9 @@
           "fix": "safe",
           "level": "info"
         },
-        "useTailwindStaticClassStrings": "warn",
-        "noTailwindRawColors": "warn",
-        "noTailwindRestyledComponents": "warn"
+        "useTailwindStaticClassStrings": "off",
+        "noTailwindRawColors": "off",
+        "noTailwindRestyledComponents": "off"
       }
     }
   },
