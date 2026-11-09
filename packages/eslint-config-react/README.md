@@ -16,6 +16,7 @@ bun add -D @kumix/eslint-config-react eslint typescript
 ## Configurations
 
 This package provides one composed configuration:
+
 - **reactFast** - `@kumix/eslint-config` fast preset with the React layer on top
 
 ### Recommended Starter Configuration
@@ -58,6 +59,7 @@ bun add -D @kumix/biome-config @biomejs/biome
 ### React-Specific Rules
 
 `reactFast` adds the React layer on top of the base config, since Biome has no equivalents:
+
 - React recommended rules (`eslint-plugin-react`)
 - React Hooks rules (`eslint-plugin-react-hooks`, `recommended-latest`)
 - TanStack Query linting (`@tanstack/eslint-plugin-query`)

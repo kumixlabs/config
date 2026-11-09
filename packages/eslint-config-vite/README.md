@@ -16,6 +16,7 @@ bun add -D @kumix/eslint-config-vite eslint typescript
 ## Configurations
 
 This package provides one composed configuration:
+
 - **viteFast** - `@kumix/eslint-config-react` reactFast preset with the Vite/React Refresh layer on top
 
 ### Recommended Starter Configuration
@@ -71,6 +72,7 @@ bun add -D @kumix/biome-config @biomejs/biome
 ### Vite & React-Specific Rules
 
 Both presets add the same layers, since Biome has no equivalents:
+
 - Everything from `@kumix/eslint-config-react` (React, React Hooks, TanStack Query)
 - TanStack Router linting (`@tanstack/eslint-plugin-router`, `flat/recommended`)
 - React Refresh rules for Vite HMR (`eslint-plugin-react-refresh`, `configs.vite`)
